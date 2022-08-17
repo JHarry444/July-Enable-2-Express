@@ -54,17 +54,21 @@ app.post("/createCake", (req, res, next) => {
     console.log("BODY:", req.body);
     if (!req.body || Object.keys(req.body).length < 1) return next({ status: 400, message: "No body"})
 
-   return res.status(201).send();
+    cakes.push(req.body);
+    return res.status(201).send(cakes[cakes.length - 1]);
 });
 
 app.get("/getAllCakes", (req, res) => {
-    return res.send();
+    return res.json(cakes);
 });
 
-app.get("/getCake/:id", (req, res) => {
+app.get("/getCake/:id", (req, res, next) => {
     console.log("PARAMS", req.params);
+    const {id} = req.params;
+    if (id === null || id === undefined) return next({status: 400, message: "Missing id"});
+    if (id < 0 || id >= cakes.length) return next({ status: 404, message: "No cake found with id: " + id})
 
-    return res.send();
+    return res.json(cakes[id]);
 });
 
 app.patch("/updateCake", (req, res) => {
@@ -76,8 +80,8 @@ app.patch("/updateCake", (req, res) => {
 
 app.delete("/removeCake/:id", (req, res) => {
     console.log("PARAMS:", req.params);
-
-    res.send();
+    cakes.splice(req.params.id);
+    res.status(204).send();
 });
 
 app.use("*", (req, res, next) => next({status: 404, message: "Incorrect URL"}));
