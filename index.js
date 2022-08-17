@@ -71,23 +71,31 @@ app.get("/getCake/:id", (req, res, next) => {
     return res.json(cakes[id]);
 });
 
-app.patch("/updateCake", (req, res) => {
+app.patch("/updateCake/:id", (req, res) => {
+    console.log("PARAMS", req.params);
     console.log("QUERY:", req.query);
+    const { name, cost, amount} = req.query;
+    const { id } = req.params;
+    const cakeToUpdate = cakes[req.params.id];
+    
+    if (name) cakeToUpdate.name = cakeToUpdate.name;
+    if (cost !== null && cost !== undefined) cakeToUpdate.cost = cost;
+    if (amount !== null && amount !== undefined) cakeToUpdate.amount = amount;
 
-    return res.send();
+    return res.json(cakes[id]);
 });
 
 
 app.delete("/removeCake/:id", (req, res) => {
     console.log("PARAMS:", req.params);
     cakes.splice(req.params.id);
-    res.status(204).send();
+    return res.status(204).send();
 });
 
 app.use("*", (req, res, next) => next({status: 404, message: "Incorrect URL"}));
 
 app.use((err, req, res, next) => {
-    res.status(err.status).send(err.message);
+    return res.status(err.status || 500).send(err.message || err);
 })
 
 const server = app.listen(4494, () => {
