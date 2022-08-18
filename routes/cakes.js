@@ -1,16 +1,24 @@
 /* eslint-disable consistent-return */
 const router = require('express').Router();
 
+const { body } = require('express-validator');
+
 const Cake = require('../db');
 
-router.post('/createCake', (req, res, next) => {
-  console.log('BODY:', req.body);
-  if (!req.body || Object.keys(req.body).length < 1) return next({ status: 400, message: 'No body' });
-
-  Cake.create(req.body)
-    .then((result) => res.status(201).json(result))
-    .catch((err) => next(err));
-});
+router.post(
+  '/createCake',
+  body('name').notEmpty().withMessage({ message: 'Name is required!', statusCode: 400 }),
+  body('amount').isNumeric({ min: 1, max: 99 }),
+  body('cost').isDecimal({ force_decimal: true, decimal_digits: 2 }),
+  async (req, res, next) => {
+    try {
+      const created = await Cake.create(req.body);
+      return res.status(201).json(created);
+    } catch (err) {
+      return next(err);
+    }
+  },
+);
 
 router.get('/getAllCakes', (req, res, next) => {
   Cake.find().then((results) => res.json(results)).catch((err) => next(err));
@@ -19,7 +27,7 @@ router.get('/getAllCakes', (req, res, next) => {
 router.get('/getCake/:id', (req, res, next) => {
   console.log('PARAMS', req.params);
   const { id } = req.params;
-  if (id === null || id === undefined) return next({ status: 400, message: 'Missing id' });
+  if (id === null || id === undefined) return next({ statusCode: 400, message: 'Missing id' });
 
   Cake.findById(id).then((result) => res.json(result)).catch((err) => next(err));
 });
