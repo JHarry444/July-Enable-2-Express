@@ -8,43 +8,43 @@ app.use(bodyParser.json());
 
 const cakeRoutes = require('./routes/cakes');
 
-app.use((req, res, next) => {
-  console.log('Never');
-  return next();
-});
+// app.use((req, res, next) => {
+//   console.log('Never');
+//   return next();
+// });
 
-app.use((req, res, next) => {
-  console.log('gonna');
-  return next();
-});
+// app.use((req, res, next) => {
+//   console.log('gonna');
+//   return next();
+// });
 
-app.use((req, res, next) => {
-  console.log('give');
-  // return next("Oops"); causes error
-  return next();
-});
+// app.use((req, res, next) => {
+//   console.log('give');
+//   // return next("Oops"); causes error
+//   return next();
+// });
 
-app.use((req, res, next) => {
-  console.log('you');
-  return next();
-});
-app.use((req, res, next) => {
-  console.log('up');
-  return next();
-});
-app.use((req, res, next) => {
-  console.log('!');
-  return next();
-});
+// app.use((req, res, next) => {
+//   console.log('you');
+//   return next();
+// });
+// app.use((req, res, next) => {
+//   console.log('up');
+//   return next();
+// });
+// app.use((req, res, next) => {
+//   console.log('!');
+//   return next();
+// });
 
-const middleware = (req, res, next) => {
-  console.log('Never gonna tuuurn around');
-  return next();
-};
+// const middleware = (req, res, next) => {
+//   // console.log('Never gonna tuuurn around');
+//   return next();
+// };
 
-app.use('/cakes', middleware, cakeRoutes);
+app.use('/cakes', cakeRoutes);
 
-app.get('/hello', middleware, (req, res) => res.send('Hello, World!'));
+app.get('/hello', (req, res) => res.send('Hello, World!'));
 
 app.use('*', (req, res, next) => next({ statusCode: 404, message: 'Incorrect URL' }));
 

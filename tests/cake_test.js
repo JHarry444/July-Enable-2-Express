@@ -12,27 +12,23 @@ const Cake = require('../db');
 const server = require('../index');
 
 describe('CRUD Testing', () => {
-  let id;
+  let testCake;
 
   beforeEach(async () => {
-    try {
-      await Cake.deleteMany({});
-      const testCake = await Cake.create({
-        name: 'Fairy Cake',
-        cost: 3.40,
-        amount: 2,
-      });
-      id = testCake._id;
-    } catch (err) {
-      console.error(err);
-    }
+    await Cake.deleteMany({});
+    testCake = await Cake.create({
+      name: 'Fairy Cake',
+      cost: 3.40,
+      amount: 2,
+    });
+    testCake = JSON.parse(JSON.stringify(testCake));
   });
 
   it('should create a cake', (done) => {
     const newCake = {
       name: 'Madeira',
       amount: 12,
-      cost: 10,
+      cost: 10.00,
     };
     chai.request(server).post('/cakes/createCake').send(newCake).end((err, res) => {
       expect(err).to.be.null;
@@ -44,17 +40,39 @@ describe('CRUD Testing', () => {
     });
   });
 
-  it('should update a cake', (done) => {
-    chai.request(server).patch(`/cakes/updateCake/${id}`).query({ name: 'Jaffa' }).end((err, res) => {
+  it('should find a cake', (done) => {
+    chai.request(server).get(`/cakes/getCake/${testCake._id}`).end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(200);
-      expect(res.body).to.include({
-        _id: id.toString(),
-        name: 'Fairy Cake',
-        cost: 3.40,
-        amount: 2,
-      });
+      expect(res.body).to.deep.equal(testCake);
+      return done();
+    });
+  });
 
+  it('should find cakes', (done) => {
+    chai.request(server).get('/cakes/getAllCakes').end((err, res) => {
+      expect(err).to.be.null;
+      expect(res.status).to.equal(200);
+      expect(res.body).to.have.lengthOf(1);
+      expect(res.body[0]).to.deep.equal(testCake);
+      return done();
+    });
+  });
+
+  it('should update a cake', (done) => {
+    chai.request(server).patch(`/cakes/updateCake/${testCake._id}`).query({ name: 'Jaffa' }).end((err, res) => {
+      expect(err).to.be.null;
+      expect(res.status).to.equal(200);
+      expect(res.body).to.include(testCake);
+
+      return done();
+    });
+  });
+
+  it('should delete a cake', (done) => {
+    chai.request(server).delete(`/cakes/removeCake/${testCake._id}`).end((err, res) => {
+      expect(err).to.be.null;
+      expect(res.status).to.equal(204);
       return done();
     });
   });

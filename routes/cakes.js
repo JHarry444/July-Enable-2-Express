@@ -1,15 +1,10 @@
 /* eslint-disable consistent-return */
 const router = require('express').Router();
 
-const { body } = require('express-validator');
-
 const Cake = require('../db');
 
 router.post(
   '/createCake',
-  body('name').notEmpty().withMessage({ message: 'Name is required!', statusCode: 400 }),
-  body('amount').isNumeric({ min: 1, max: 99 }),
-  body('cost').isDecimal({ force_decimal: true, decimal_digits: 2 }),
   async (req, res, next) => {
     try {
       const created = await Cake.create(req.body);
@@ -20,28 +15,42 @@ router.post(
   },
 );
 
-router.get('/getAllCakes', (req, res, next) => {
-  Cake.find().then((results) => res.json(results)).catch((err) => next(err));
+router.get('/getAllCakes', async (req, res, next) => {
+  try {
+    const results = await Cake.find();
+    res.json(results);
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.get('/getCake/:id', (req, res, next) => {
-  console.log('PARAMS', req.params);
+router.get('/getCake/:id', async (req, res, next) => {
+  // console.log('PARAMS', req.params);
   const { id } = req.params;
   if (id === null || id === undefined) return next({ statusCode: 400, message: 'Missing id' });
 
-  Cake.findById(id).then((result) => res.json(result)).catch((err) => next(err));
+  try {
+    const result = await Cake.findById(id);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.patch('/updateCake/:id', (req, res, next) => {
-  console.log('PARAMS', req.params);
-  console.log('QUERY:', req.query);
+router.patch('/updateCake/:id', async (req, res, next) => {
+  // console.log('PARAMS', req.params);
+  // console.log('QUERY:', req.query);
   const { id } = req.params;
-
-  Cake.findByIdAndUpdate(id, req.query).then((result) => res.json(result)).catch((e) => next(e));
+  try {
+    const result = await Cake.findByIdAndUpdate(id, req.query);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.delete('/removeCake/:id', async (req, res, next) => {
-  console.log('PARAMS:', req.params);
+  // console.log('PARAMS:', req.params);
 
   try {
     const result = await Cake.findByIdAndDelete(req.params.id);
