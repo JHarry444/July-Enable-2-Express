@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-expressions */
-const { describe, it, beforeEach } = require('mocha');
 const chai = require('chai');
 const chaiHTTP = require('chai-http');
 
@@ -11,8 +10,14 @@ const Cake = require('../db');
 
 const server = require('../index');
 
+const mongoose = require("mongoose");
+
 describe('CRUD Testing', () => {
   let testCake;
+
+  afterAll(async () => {
+    await mongoose.disconnect();
+  })
 
   beforeEach(async () => {
     await Cake.deleteMany({});
@@ -24,7 +29,7 @@ describe('CRUD Testing', () => {
     testCake = JSON.parse(JSON.stringify(testCake));
   });
 
-  it('should create a cake', (done) => {
+  test('should create a cake', (done) => {
     const newCake = {
       name: 'Madeira',
       amount: 12,
@@ -40,7 +45,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  it('should find a cake', (done) => {
+  test('should find a cake', (done) => {
     chai.request(server).get(`/cakes/getCake/${testCake._id}`).end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(200);
@@ -49,7 +54,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  it('should find cakes', (done) => {
+  test('should find cakes', (done) => {
     chai.request(server).get('/cakes/getAllCakes').end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(200);
@@ -59,7 +64,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  it('should update a cake', (done) => {
+  test('should update a cake', (done) => {
     chai.request(server).patch(`/cakes/updateCake/${testCake._id}`).query({ name: 'Jaffa' }).end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(200);
@@ -69,7 +74,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  it('should delete a cake', (done) => {
+  test('should delete a cake', (done) => {
     chai.request(server).delete(`/cakes/removeCake/${testCake._id}`).end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(204);

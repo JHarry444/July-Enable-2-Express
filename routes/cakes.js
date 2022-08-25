@@ -27,7 +27,7 @@ router.get('/getAllCakes', async (req, res, next) => {
 router.get('/getCake/:id', async (req, res, next) => {
   // console.log('PARAMS', req.params);
   const { id } = req.params;
-  if (id === null || id === undefined) return next({ statusCode: 400, message: 'Missing id' });
+  if (!id) return next({ statusCode: 400, message: 'Missing id' });
 
   try {
     const result = await Cake.findById(id);
