@@ -2,7 +2,7 @@ const express = require('express');
 
 const app = express();
 
-const cors = require("cors");
+const cors = require('cors');
 
 app.use(cors());
 
@@ -48,7 +48,7 @@ const cakeRoutes = require('./routes/cakes');
 
 app.use('/cakes', cakeRoutes);
 
-app.get('/hello', (req, res) => res.send('Hello, World!'));
+app.get("/hello", (req, res) => res.send('Hello, World!'));
 
 app.use('*', (req, res, next) => next({ statusCode: 404, message: 'Incorrect URL' }));
 

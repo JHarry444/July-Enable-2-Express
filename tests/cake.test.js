@@ -1,25 +1,25 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable no-unused-expressions */
 const chai = require('chai');
 const chaiHTTP = require('chai-http');
 
 chai.use(chaiHTTP);
 const { expect } = chai;
 
+const { describe, it, after, before } = require('mocha');
+
+const mongoose = require('mongoose');
 const Cake = require('../db');
 
 const server = require('../index');
 
-const mongoose = require("mongoose");
-
 describe('CRUD Testing', () => {
   let testCake;
 
-  afterAll(async () => {
+  after(async () => {
     await mongoose.disconnect();
-  })
+  });
 
-  beforeEach(async () => {
+  before(async () => {
     await Cake.deleteMany({});
     testCake = await Cake.create({
       name: 'Fairy Cake',
@@ -29,7 +29,7 @@ describe('CRUD Testing', () => {
     testCake = JSON.parse(JSON.stringify(testCake));
   });
 
-  test('should create a cake', (done) => {
+  it('should create a cake', (done) => {
     const newCake = {
       name: 'Madeira',
       amount: 12,
@@ -45,7 +45,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  test('should find a cake', (done) => {
+  it('should find a cake', (done) => {
     chai.request(server).get(`/cakes/getCake/${testCake._id}`).end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(200);
@@ -54,7 +54,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  test('should find cakes', (done) => {
+  it('should find cakes', (done) => {
     chai.request(server).get('/cakes/getAllCakes').end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(200);
@@ -64,7 +64,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  test('should update a cake', (done) => {
+  it('should update a cake', (done) => {
     chai.request(server).patch(`/cakes/updateCake/${testCake._id}`).query({ name: 'Jaffa' }).end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(200);
@@ -74,7 +74,7 @@ describe('CRUD Testing', () => {
     });
   });
 
-  test('should delete a cake', (done) => {
+  it('should delete a cake', (done) => {
     chai.request(server).delete(`/cakes/removeCake/${testCake._id}`).end((err, res) => {
       expect(err).to.be.null;
       expect(res.status).to.equal(204);

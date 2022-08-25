@@ -20,7 +20,16 @@ router.get('/getAllCakes', async (req, res, next) => {
     const results = await Cake.find();
     res.json(results);
   } catch (err) {
-    next(err);
+    return next(err);
+  }
+});
+
+router.get('/findCakes/', async (req, res, next) => {
+  try {
+    const results = await Cake.find({ name: { $regex: req.query.name, $options: 'i' } });
+    return res.json(results);
+  } catch (err) {
+    return next(err);
   }
 });
 
