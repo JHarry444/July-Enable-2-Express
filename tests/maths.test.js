@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const { describe, it } = require('mocha');
 // test class?
-describe("Maths tests", () => {
+describe('Maths tests', () => {
   // beforeEach(() => console.log('I run b4 the test'));
 
   // @Test
