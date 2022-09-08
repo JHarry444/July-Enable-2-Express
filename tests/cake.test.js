@@ -32,48 +32,78 @@ describe('CRUD Testing', () => {
     };
 
     request(server).post('/cakes/createCake').send(newCake).end((err, res) => {
-      expect(err).toBeNull();
-      expect(res.status).toBe(201);
-      expect(res.body).toMatchObject(newCake);
-      expect(res.body._id).toBeTruthy();
-
+      try {
+        expect(err).toBeNull();
+        expect(res.status).toBe(201);
+        expect(res.body).toMatchObject(newCake);
+        expect(res.body._id).toBeTruthy();
+      } catch (error) {
+        return done(error);
+      }
       return done();
     });
   });
 
   test('should find a cake', (done) => {
     request(server).get(`/cakes/getCake/${testCake._id}`).end((err, res) => {
-      expect(err).toBeNull();
-      expect(res.status).toBe(200);
-      expect(res.body).toMatchObject(testCake);
+      try {
+        expect(err).toBeNull();
+        expect(res.status).toBe(200);
+        expect(res.body).toMatchObject(testCake);
+      } catch (error) {
+        return done(error);
+      }
       return done();
     });
   });
 
+  test.skip('should NOT find a cake', (done) => {
+    request(server).get('/cakes/getCake/').end((err, res) => {
+      try {
+        expect(err).toBeNull();
+        expect(res.status).toBe(400);
+        expect(res.body).toMatchObject(testCake);
+      } catch (error) {
+        return done(error);
+      }
+      return done();
+    });
+  });
   test('should find cakes', (done) => {
     request(server).get('/cakes/getAllCakes').end((err, res) => {
-      expect(err).toBeNull();
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(1);
-      expect(res.body[0]).toMatchObject(testCake);
+      try {
+        expect(err).toBeNull();
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(1);
+        expect(res.body[0]).toMatchObject(testCake);
+      } catch (error) {
+        return done(error);
+      }
       return done();
     });
   });
 
   test('should update a cake', (done) => {
     request(server).patch(`/cakes/updateCake/${testCake._id}`).query({ name: 'Jaffa' }).end((err, res) => {
-      expect(err).toBeNull();
-      expect(res.status).toBe(200);
-      expect(res.body).toMatchObject(testCake);
-
+      try {
+        expect(err).toBeNull();
+        expect(res.status).toBe(200);
+        expect(res.body).toMatchObject(testCake);
+      } catch (error) {
+        return done(error);
+      }
       return done();
     });
   });
 
   test('should delete a cake', (done) => {
     request(server).delete(`/cakes/removeCake/${testCake._id}`).end((err, res) => {
-      expect(err).toBeNull();
-      expect(res.status).toBe(204);
+      try {
+        expect(err).toBeNull();
+        expect(res.status).toBe(204);
+      } catch (error) {
+        return done(error);
+      }
       return done();
     });
   });
